@@ -1,0 +1,44 @@
+# 忽略项目无关文件
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# 忽略编辑器配置文件
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 忽略环境文件
+.env
+.env.local
+.env.*.local
+
+# 忽略依赖文件
+node_modules/
+python_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 忽略日志文件
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 忽略构建文件
+dist/
+build/
+*.egg-info/
+.tox/
+.coverage
+.coverage.*
+.cache/
