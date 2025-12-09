@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中际旭创(300308)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            width: 393px; /* iPhone15宽度：2556px / 6.5（缩放）= 393px */
+            height: 852px; /* iPhone15高度：1179px / 1.38 = 852px */
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        /* 顶部状态栏 */
+        .status-bar {
+            height: 44px;
+            background-color: #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .signal {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .signal-bar {
+            width: 3px;
+            background-color: #fff;
+            border-radius: 1px;
+        }
+        
+        .signal-bar:nth-child(1) { height: 4px; }
+        .signal-bar:nth-child(2) { height: 6px; }
+        .signal-bar:nth-child(3) { height: 8px; }
+        .signal-bar:nth-child(4) { height: 10px; }
+        .signal-bar:nth-child(5) { height: 12px; }
+        
+        /* 股票标题栏 */
+        .stock-header {
+            height: 48px;
+            background-color: #000;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .back-icon {
+            width: 12px;
+            height: 12px;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            transform: rotate(45deg);
+        }
+        
+        .stock-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stock-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .stock-code {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .market-status {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        .search-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-icon {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .search-icon::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 2px;
+            background-color: #fff;
+            transform: rotate(45deg);
+            right: -4px;
+            bottom: -2px;
+        }
+        
+        /* 股票基本信息 */
+        .stock-basic {
+            padding: 16px;
+            background-color: #000;
+        }
+        
+        .price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .current-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ff3b30;
+        }
+        
+        .price-change {
+            font-size: 14px;
+            color: #ff3b30;
+        }
+        
+        .price-change-percent {
+            font-size: 14px;
+            color: #ff3b30;
+        }
+        
+        .stock-metrics {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 行情标签栏 */
+        .quote-tabs {
+            height: 40px;
+            background-color: #000;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 24px;
+            overflow-x: auto;
+        }
+        
+        .quote-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab-item {
+            font-size: 14px;
+            color: #666;
+            padding: 8px 0;
+            position: relative;
+            white-space: nowrap;
+        }
+        
+        .tab-item.active {
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ff3b30;
+        }
+        
+        /* 图表和盘口并排容器 */
+        .chart-depth-container {
+            display: flex;
+            height: 300px;
+            background-color: #000;
+        }
+        
+        /* 图表区域 */
+        .chart-container {
+            flex: 1;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 盘口区域 */
+        .market-depth {
+            width: 120px;
+            background-color: #000;
+            border-left: 1px solid #1a1a1a;
+        }
+        
+        .depth-right {
+            width: 100%;
+            padding: 8px 0;
+        }
+        
+        .depth-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 16px;
+            font-size: 12px;
+        }
+        
+        .sell-item .price {
+            color: #ff3b30;
+        }
+        
+        .buy-item .price {
+            color: #00c853;
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            height: 44px;
+            background-color: #000;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+            overflow-x: auto;
+        }
+        
+        .bottom-nav::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .nav-item {
+            font-size: 12px;
+            color: #666;
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+        
+        .nav-item.active {
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        /* 投资者问答 */
+        .qa-section {
+            padding: 16px;
+            background-color: #000;
+            border-top: 1px solid #1a1a1a;
+        }
+        
+        .qa-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .qa-content {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.5;
+        }
+        
+        /* 底部功能栏 */
+        .function-bar {
+            height: 50px;
+            background-color: #000;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 16px;
+        }
+        
+        .function-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        /* Alice简报 */
+        .alice-report {
+            position: absolute;
+            bottom: 66px;
+            left: 16px;
+            right: 16px;
+            height: 40px;
+            background: linear-gradient(90deg, #ff3b30, #ff9500);
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .report-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+        <div class="status-left">11:33</div>
+        <div class="status-right">
+            <div class="signal">
+                <div class="signal-bar"></div>
+                <div class="signal-bar"></div>
+                <div class="signal-bar"></div>
+                <div class="signal-bar"></div>
+                <div class="signal-bar"></div>
+            </div>
+            <span>5G</span>
+            <span>82%</span>
+        </div>
+    </div>
+    
+    <!-- 股票标题栏 -->
+    <div class="stock-header">
+        <div class="header-left">
+            <div class="back-btn">
+                <div class="back-icon"></div>
+            </div>
+            <div class="stock-info">
+                <div class="stock-name">中际旭创(300308)</div>
+                <div class="market-status">休市中 12-09 11:30:00</div>
+            </div>
+        </div>
+        <div class="search-btn">
+            <div class="search-icon"></div>
+        </div>
+    </div>
+    
+    <!-- 股票基本信息 -->
+    <div class="stock-basic">
+        <div class="price-section">
+            <div class="current-price">609.58</div>
+            <div class="price-change">+39.58</div>
+            <div class="price-change-percent">+6.94%</div>
+        </div>
+        <div class="stock-metrics">
+            <span>155亿 股本</span>
+            <span>0 市盈<sup>ttm</sup></span>
+            <span>79.2 万得盘口</span>
+            <span>2.37% 换手</span>
+            <span>6773亿 市值</span>
+            <span>26.11 市净</span>
+        </div>
+    </div>
+    
+    <!-- 行情标签栏 -->
+    <div class="quote-tabs">
+        <div class="tab-item active">分时</div>
+        <div class="tab-item">五日</div>
+        <div class="tab-item">日K</div>
+        <div class="tab-item">周K</div>
+        <div class="tab-item">月K</div>
+        <div class="tab-item">更多</div>
+        <div class="tab-item">⚙️</div>
+    </div>
+    
+    <!-- 图表和盘口并排容器 -->
+    <div class="chart-depth-container">
+        <!-- 图表区域 -->
+        <div class="chart-container">
+            <!-- 这里将使用Canvas绘制图表 -->
+            <canvas class="chart-canvas" id="chartCanvas"></canvas>
+        </div>
+        
+        <!-- 盘口区域 -->
+        <div class="market-depth">
+            <div class="depth-right">
+                <div class="depth-item sell-item">
+                    <span>卖五</span>
+                    <span class="price">609.85</span>
+                    <span>1</span>
+                </div>
+                <div class="depth-item sell-item">
+                    <span>卖四</span>
+                    <span class="price">609.71</span>
+                    <span>3</span>
+                </div>
+                <div class="depth-item sell-item">
+                    <span>卖三</span>
+                    <span class="price">609.68</span>
+                    <span>1</span>
+                </div>
+                <div class="depth-item sell-item">
+                    <span>卖二</span>
+                    <span class="price">609.63</span>
+                    <span>1</span>
+                </div>
+                <div class="depth-item sell-item">
+                    <span>卖一</span>
+                    <span class="price">609.58</span>
+                    <span>14</span>
+                </div>
+                <div class="depth-item buy-item">
+                    <span>买一</span>
+                    <span class="price">609.00</span>
+                    <span>4</span>
+                </div>
+                <div class="depth-item buy-item">
+                    <span>买二</span>
+                    <span class="price">608.99</span>
+                    <span>4</span>
+                </div>
+                <div class="depth-item buy-item">
+                    <span>买三</span>
+                    <span class="price">608.90</span>
+                    <span>1</span>
+                </div>
+                <div class="depth-item buy-item">
+                    <span>买四</span>
+                    <span class="price">608.45</span>
+                    <span>9</span>
+                </div>
+                <div class="depth-item buy-item">
+                    <span>买五</span>
+                    <span class="price">608.43</span>
+                    <span>3</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <div class="nav-item active">资讯</div>
+        <div class="nav-item">资金</div>
+        <div class="nav-item">雷达</div>
+        <div class="nav-item">公告</div>
+        <div class="nav-item">研报</div>
+        <div class="nav-item">资料</div>
+        <div class="nav-item">财务</div>
+        <div class="nav-item">重仓</div>
+    </div>
+    
+    <!-- 投资者问答 -->
+    <div class="qa-section">
+        <div class="qa-title">投资者问答:</div>
+        <div class="qa-content">请问贵公司3.2T光模块产品进展到哪一步了？预计何时可以投产？</div>
+    </div>
+    
+    <!-- 底部功能栏 -->
+    <div class="function-bar">
+        <div class="function-item">
+            <div>📊</div>
+            <span>电子元件</span>
+        </div>
+        <div class="function-item">
+            <div>🔗</div>
+            <span>分享</span>
+        </div>
+        <div class="function-item">
+            <div>🔔</div>
+            <span>添加提醒</span>
+        </div>
+        <div class="function-item">
+            <div>⭐</div>
+            <span>加自选</span>
+        </div>
+        <div class="function-item">
+            <div>📋</div>
+            <span>深度资料</span>
+        </div>
+        <div class="function-item">
+            <div>⋮⋮</div>
+            <span>更多</span>
+        </div>
+    </div>
+    
+    <!-- Alice简报 -->
+    <div class="alice-report">
+        <span>Alice已为您总结了今日简报</span>
+        <button class="report-btn">查看</button>
+    </div>
+    
+    <script>
+        // 绘制分时图
+        const canvas = document.getElementById('chartCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置Canvas尺寸
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        
+        // 模拟分时数据
+        const data = [
+            { time: 0, price: 570.00 },
+            { time: 0.1, price: 575.00 },
+            { time: 0.2, price: 580.00 },
+            { time: 0.3, price: 578.00 },
+            { time: 0.4, price: 585.00 },
+            { time: 0.5, price: 590.00 },
+            { time: 0.6, price: 595.00 },
+            { time: 0.7, price: 600.00 },
+            { time: 0.8, price: 605.00 },
+            { time: 0.9, price: 608.00 },
+            { time: 1.0, price: 609.58 }
+        ];
+        
+        // 绘制网格
+        function drawGrid() {
+            ctx.strokeStyle = '#1a1a1a';
+            ctx.lineWidth = 1;
+            
+            // 垂直线
+            for (let i = 0; i <= 6; i++) {
+                const x = (canvas.width / 6) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height - 50);
+                ctx.stroke();
+            }
+            
+            // 水平线
+            for (let i = 0; i <= 4; i++) {
+                const y = (canvas.height - 50) / 4 * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        // 绘制价格曲线
+        function drawPriceLine() {
+            ctx.strokeStyle = '#ff9500';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            data.forEach((point, index) => {
+                const x = point.time * canvas.width;
+                const y = canvas.height - 50 - ((point.price - 570) / 40) * (canvas.height - 50);
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+        }
+        
+        // 绘制成交量柱状图
+        function drawVolumeBars() {
+            const barWidth = canvas.width / data.length;
+            
+            data.forEach((point, index) => {
+                const x = index * barWidth;
+                const volume = Math.random() * 1000;
+                const barHeight = (volume / 1000) * 50;
+                
+                ctx.fillStyle = point.price > data[index - 1]?.price ? '#00c853' : '#ff3b30';
+                ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+            });
+        }
+        
+        // 绘制图表
+        function drawChart() {
+            drawGrid();
+            drawPriceLine();
+            drawVolumeBars();
+        }
+        
+        drawChart();
+    </script>
+</body>
+</html>
